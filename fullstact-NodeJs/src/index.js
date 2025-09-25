@@ -52,10 +52,15 @@ app.use((req, res) => {
 });
 
 // Bootstrap the application/start the server by connecting to MongoDB
+// Load environment variables
+require('dotenv').config();
+
 async function bootstrap() {
     try {
          // Connect to MongoDB
-        await mongoose.connect("mongodb+srv://aminul:PSSWsXy9tAEr0So2@nodejs.asywe1b.mongodb.net/", {dbName: "fullstackTasks"});
+        await mongoose.connect(process.env.MONGODB_URI, {
+            dbName: process.env.MONGODB_DB_NAME
+        });
         console.log("Connected to MongoDB");
 
         // Ensures the app starts only after MongoDB is connected
