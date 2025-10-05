@@ -8,6 +8,7 @@ const tasksRouter = require("./tasks/tasks.router.js");
 const authRouter = require("./auth/auth.router.js");
 const usersRouter = require("./users/users.router.js");
 const mongoose = require("mongoose");
+const expressWinstonLogger = require("./middleware/expressWinston.middleware.js");
 
 const cors = require("cors");
 
@@ -33,6 +34,7 @@ let accessLogStream = fs.createWriteStream(
 
 app.use(morgan("combined", { stream: accessLogStream })); // log every request
 app.use(responseFormatter); // format response middleware
+app.use(expressWinstonLogger);
 
 const middleware = (req, res, next) => {
     req.info = { appname: "Tasks Manager", author: "Mhd Aminul" };
