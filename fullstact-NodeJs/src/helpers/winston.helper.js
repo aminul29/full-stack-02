@@ -1,5 +1,4 @@
-
-    // Import required dependencies
+// Import required dependencies
     const winston = require("winston");
     const path = require("path");
 
@@ -14,13 +13,13 @@
             ),
         }),
         // File transport for info level logs
-        new winston.transport.File({
+        new winston.transports.File({
             level: "info",
             filename: path.join(__dirname, "../..", "info.log"), // Store info logs in project root
             format: winston.format.json() // Store logs in JSON format
         }),
         // File transport for error level logs
-        new winston.transport.File({
+        new winston.transports.File({
             level: "error",
             filename: path.join(__dirname, "../..", "error.log"), // Store error logs in project root
             format: winston.format.json() // Store logs in JSON format
