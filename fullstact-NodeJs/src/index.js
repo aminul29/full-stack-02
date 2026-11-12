@@ -25,22 +25,20 @@ const corsOptions = {
 };
 */
 
-app.use(cors()); 
+app.use(cors());
 
-let accessLogStream = fs.createWriteStream(
-    path.join(__dirname, "access.log"),
-    { flags: "a" }
-);
+let accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
+  flags: "a",
+});
 
 app.use(morgan("combined", { stream: accessLogStream })); // log every request
 app.use(responseFormatter); // format response middleware
 app.use(expressWinstonLogger);
 
 const middleware = (req, res, next) => {
-    req.info = { appname: "Tasks Manager", author: "Mhd Aminul" };
-    next();
-}
-
+  req.info = { appname: "Tasks Manager", author: "Mhd Aminul" };
+  next();
+};
 
 app.use(middleware);
 
@@ -50,32 +48,46 @@ app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 
 app.use((req, res) => {
-    res.status(StatusCodes.NOT_FOUND).json(null);
+  res.status(StatusCodes.NOT_FOUND).json(null);
 });
 
 // Bootstrap the application/start the server by connecting to MongoDB
-// Load environment variables
-require('dotenv').config();
+// Load environment variables (.env in fullstact-NodeJs or current directory)
+const envFile = [
+  path.resolve(__dirname, "../.env"),
+  path.resolve(process.cwd(), ".env"),
+].find((filePath) => fs.existsSync(filePath));
+
+if (envFile) {
+  require("dotenv").config({ path: envFile });
+} else {
+  require("dotenv").config();
+}
 
 async function bootstrap() {
-    try {
-         // Connect to MongoDB
-        await mongoose.connect(process.env.MONGODB_URI, {
-            dbName: process.env.MONGODB_DB_NAME
-        });
-        console.log("Connected to MongoDB");
-
-        // Ensures the app starts only after MongoDB is connected
-        app.listen(port, () => {
-            console.log(`Example app listening on port ${port}`);
-        });
-
-    } catch (error) {
-        console.error("Error connecting to MongoDB:", error);
-        process.exit(1); // Exit with error code
+  try {
+    if (!process.env.MONGODB_URI || process.env.MONGODB_URI.includes("your-cluster-url")) {
+      console.warn(
+        "\n⚠️  [WARN] MONGODB_URI is not configured in .env!\n" +
+        "Please update fullstact-NodeJs/.env with your valid MongoDB connection string.\n"
+      );
     }
+
+    // Connect to MongoDB
+    await mongoose.connect(process.env.MONGODB_URI, {
+      dbName: process.env.MONGODB_DB_NAME,
+    });
+    console.log("Connected to MongoDB");
+
+    // Ensures the app starts only after MongoDB is connected
+    // The app will start listening on the specified port no
+    app.listen(port, () => {
+      console.log(`Example app listening on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error.message || error);
+    process.exit(1); // Exit with error code
+  }
 }
 // Start the application
 bootstrap();
-
-

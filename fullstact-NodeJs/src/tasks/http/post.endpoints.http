@@ -2,8 +2,8 @@ POST http://localhost:3001/tasks
 Content-Type: application/json
 
 {
-    "title": "Title of the Task Seven",
-    "dueDate": "2025-01-01T12:00:00Z",
+    "title": "November 11th",
+    "dueDate": "2023-11-11T00:00:00.000Z",
     "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
     "priority": "",
     "status": ""
